@@ -9,7 +9,7 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 from collections import Counter
 
-st.set_page_config(page_title="DRAFT 1",page_icon='📑',layout='wide')
+st.set_page_config(page_title="Netflix Data Analysis Dashboard,page_icon='🎬',layout='wide')
 df1=pd.read_csv('netflix_titles.csv')
 df=pd.read_csv('cleaned_dataset.csv')
 df['date_added']=pd.to_datetime(df['date_added'],errors='coerce')
