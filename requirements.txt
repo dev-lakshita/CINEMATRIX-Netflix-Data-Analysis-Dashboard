@@ -5,5 +5,3 @@ numpy
 plotly
 matplotlib
 seaborn
-base64
-collections
