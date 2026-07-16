@@ -247,12 +247,14 @@ elif side=='Visualization':
         # fig.update_xaxes(title_text="Release Year", row=2, col=1)
         # fig.update_layout(height=400)
         country_df = df.copy()
-        country_df['country'] = country_df['country'].fillna('Unknown')
-        country_df['country'] = country_df['country'].str.split(',').str[0]
-        top_country = country_df['country'].value_counts().head(10)
-        fig.add_trace(go.Bar(x=top_country.values,y=top_country.index,orientation='h',name='Countries'),row=2,col=1)
-        fig.update_xaxes(title_text="Content Count",row=2,col=1)
-        fig.update_yaxes(title_text="Country",row=2,col=1)
+        # country_df['country'] = country_df['country'].fillna('Unknown')
+        # country_df['country'] = country_df['country'].str.split(',').str[0]
+        # top_country = country_df['country'].value_counts().head(10)
+        # fig.add_trace(go.Bar(x=top_country.values,y=top_country.index,orientation='h',name='Countries'),row=2,col=1)
+        # fig.update_xaxes(title_text="Content Count",row=2,col=1)
+        # fig.update_yaxes(title_text="Country",row=2,col=1)
+        country_year=country_df.groupby(['year_added','country']).size().reset_index(name='count')
+        px.Bar(country_year,x='year_added',y='count',color='country',barmode='stack')
                 
 
         
