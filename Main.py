@@ -236,7 +236,7 @@ elif side=='Visualization':
         tv_shows=df_trends[df_trends['type']=='TV Show']
         df_cleaned=df[~df['rating'].str.contains('min',case=False)].reset_index(names='count')
         ratings_counts=df_cleaned['rating'].value_counts().reset_index(name='count')
-        fig=make_subplots(rows=3,cols=2,subplot_titles=("Total Content Added Over Years(Movies)","Total Content Added Over Years(TV Shows)", "Distribution of Content Release Year","Growth of Content by Genre","Cumulative Growth of Content","Content Ratings Trend Over Years"))
+        fig=make_subplots(rows=3,cols=2,subplot_titles=("Total Content Added Over Years(Movies)","Total Content Added Over Years(TV Shows)", "Country-wise Content Trend Over Years ","Growth of Content by Genre","Cumulative Growth of Content","Content Ratings Trend Over Years"))
         fig.add_trace(go.Scatter(x=movies['year_added'],y=movies['count'],name='Movies',mode='lines+markers'),row=1,col=1)
         fig.update_yaxes(title_text="Movies Added", row=1, col=1)
         fig.add_trace(go.Scatter(x=tv_shows['year_added'],y=tv_shows['count'],name='TV Shows',mode='lines+markers'),row=1,col=2)
@@ -247,14 +247,21 @@ elif side=='Visualization':
         # fig.update_xaxes(title_text="Release Year", row=2, col=1)
         # fig.update_layout(height=400)
         country_df = df.copy()
-        # country_df['country'] = country_df['country'].fillna('Unknown')
-        # country_df['country'] = country_df['country'].str.split(',').str[0]
-        # top_country = country_df['country'].value_counts().head(10)
+        country_df['country'] = country_df['country'].fillna('Unknown')
+        country_df['country'] = country_df['country'].str.split(',').str[0]
+        top_country = country_df['country'].value_counts().head(5).index
         # fig.add_trace(go.Bar(x=top_country.values,y=top_country.index,orientation='h',name='Countries'),row=2,col=1)
         # fig.update_xaxes(title_text="Content Count",row=2,col=1)
         # fig.update_yaxes(title_text="Country",row=2,col=1)
         country_year=country_df.groupby(['year_added','country']).size().reset_index(name='count')
-        px.Bar(country_year,x='year_added',y='count',color='country',barmode='stack')
+        country_year=country_year[country_year['country'].isin(top_country)]
+        for c in top_countries:
+            temp = country_year[country_year['country'] == c]
+            fig.add_trace(go.Bar(x=temp['year_added'],y=temp['count'],name=c),row=2,col=1)
+        fig.update_layout(barmode='stack')
+        fig.update_xaxes(title_text="Year Added",row=2,col=1)
+        fig.update_yaxes(title_text="Content Count",row=2,col=1)
+        
                 
 
         
