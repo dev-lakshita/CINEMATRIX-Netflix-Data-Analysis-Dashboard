@@ -238,14 +238,24 @@ elif side=='Visualization':
         ratings_counts=df_cleaned['rating'].value_counts().reset_index(name='count')
         fig=make_subplots(rows=3,cols=2,subplot_titles=("Total Content Added Over Years(Movies)","Total Content Added Over Years(TV Shows)", "Distribution of Content Release Year","Growth of Content by Genre","Cumulative Growth of Content","Content Ratings Trend Over Years"))
         fig.add_trace(go.Scatter(x=movies['year_added'],y=movies['count'],name='Movies',mode='lines+markers'),row=1,col=1)
-        # fig.update_xaxes(title_text="Year Added", row=1, col=1)
         fig.update_yaxes(title_text="Movies Added", row=1, col=1)
         fig.add_trace(go.Scatter(x=tv_shows['year_added'],y=tv_shows['count'],name='TV Shows',mode='lines+markers'),row=1,col=2)
-        # fig.update_xaxes(title_text="Year Added", row=1, col=2)
         fig.update_yaxes(title_text="TV Shows Added", row=1, col=2)
-        fig.add_trace(go.Histogram(x=df['release_year'],name='Release Year',marker_color='orange'),row=2,col=1)
-        fig.update_xaxes(title_text="Release Year", row=2, col=1)
-        fig.update_layout(height=400)
+
+        
+        # fig.add_trace(go.Histogram(x=df['release_year'],name='Release Year',marker_color='orange'),row=2,col=1)
+        # fig.update_xaxes(title_text="Release Year", row=2, col=1)
+        # fig.update_layout(height=400)
+        country_df = df.copy()
+        country_df['country'] = country_df['country'].fillna('Unknown')
+        country_df['country'] = country_df['country'].str.split(',').str[0]
+        top_country = country_df['country'].value_counts().head(10)
+        fig.add_trace(go.Bar(x=top_country.values,y=top_country.index,orientation='h',name='Countries'),row=2,col=1)
+        fig.update_xaxes(title_text="Content Count",row=2,col=1)
+        fig.update_yaxes(title_text="Country",row=2,col=1)
+                
+
+        
         genre_df = df.copy()
         genre_df['genre']=genre_df['genre'].str.split(',').str[0]
         top_genres = genre_df['genre'].value_counts().head(3).index
@@ -256,49 +266,19 @@ elif side=='Visualization':
             fig.add_trace(go.Scatter(x=temp['year_added'],y=temp['count'],mode='lines',name=g),row=2,col=2)
         fig.update_xaxes(title_text="Year Added",row=2,col=2)
         fig.update_yaxes(title_text="Content Count",row=2,col=2)
-
-
         cumulative = df.groupby('year_added').size().reset_index(name='count')
         cumulative['cumulative_count'] = cumulative['count'].cumsum()
         fig.add_trace(go.Scatter(x=cumulative['year_added'],y=cumulative['cumulative_count'],mode='lines+markers',name='Cumulative Growth'),row=3,col=1)
-        fig.update_yaxes(title_text="Total Content",row=3,col=1)
-
+        fig.update_yaxes(title_text="Total Content",row=3,col=2)
         rating_trend = df.groupby(['year_added','rating']).size().reset_index(name='count')
         top_ratings = ['TV-MA','TV-14','PG','R']
         rating_trend = rating_trend[rating_trend['rating'].isin(top_ratings)]
         for r in top_ratings:
             temp = rating_trend[rating_trend['rating']==r]
-            fig.add_trace(go.Scatter(x=temp['year_added'],y=temp['count'],mode='lines',name=r),row=3,col=2)
+            fig.add_trace(go.Scatter(x=temp['year_added'],y=temp['count'],mode='lines',name=r),row=3,col=1)
         fig.update_layout(height=1000,width=1100)
-
         fig.update_layout(barmode='stack',height=800,width=1000)
         st.plotly_chart(fig)
-
-
-# elif side=='Trends Over Years':
-#     st.title("Netflix Trends Over the Years")
-#     df_trends=df.groupby(['year_added','type']).size().reset_index(name="count")
-#     movies=df_trends[df_trends['type']=='Movie']
-#     tv_shows=df_trends[df_trends['type']=='TV Show']
-#     df_cleaned=df[~df['rating'].str.contains('min',case=False)].reset_index(names='count')
-#     ratings_counts=df_cleaned['rating'].value_counts().reset_index(name='count')
-#     fig=make_subplots(rows=2,cols=2,subplot_titles=("Total Content Added Over Years(Movies)","Total Content Added Over Years(TV Shows)", "Distribution of Content Release Year","Content by Age Rating"))
-#     fig.add_trace(go.Scatter(x=movies['year_added'],y=movies['count'],name='Movies',mode='lines+markers'),row=1,col=1)
-#     # fig.update_xaxes(title_text="Year Added", row=1, col=1)
-#     fig.update_yaxes(title_text="Movies Added", row=1, col=1)
-#     fig.add_trace(go.Scatter(x=tv_shows['year_added'],y=tv_shows['count'],name='TV Shows',mode='lines+markers'),row=1,col=2)
-#     # fig.update_xaxes(title_text="Year Added", row=1, col=2)
-#     fig.update_yaxes(title_text="TV Shows Added", row=1, col=2)
-#     fig.add_trace(go.Histogram(x=df['release_year'],name='Release Year',marker_color='orange'),row=2,col=1)
-#     fig.update_xaxes(title_text="Release Year", row=2, col=1)
-#     fig.update_layout(height=400)
-#     # fig.update_yaxes(title_text="Count", row=2, col=1)
-#     fig.add_trace(go.Bar(x=ratings_counts['rating'],y=ratings_counts['count'],name='Ratings Count',marker_color='green'),row=2,col=2)
-#     fig.update_xaxes(title_text="Age Rating", row=2, col=2)
-#     fig.update_layout(height=400)
-#     # fig.update_yaxes(title_text="Count", row=2, col=2)
-#     fig.update_layout(barmode='stack',height=800,width=1000)
-#     st.plotly_chart(fig)
 
 elif side=='Insights':
     with open('ha.jpeg','rb')as f:
@@ -317,12 +297,6 @@ elif side=='Insights':
             with st.container(border=True):
                 st.metric("Type of Content","Movies")
                 st.caption("Movies dominate Netflix's catalog")
-            # with st.container(border=True):
-            #     st.metric("Growth Over Time","2015")
-            #     st.caption("Rapid growth in content addition after 2015,with constant uploads peaking around 2019-2020")
-            # with st.container(border=True):
-            #     st.metric("Movie Duration Pattern","80-120 min")
-            #     st.caption("Movies dominate Netflix's catalog")
         with col2:
             with st.container(border=True):
                 st.metric("Top Country", "United States")
