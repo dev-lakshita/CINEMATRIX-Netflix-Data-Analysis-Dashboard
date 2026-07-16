@@ -268,7 +268,7 @@ elif side=='Visualization':
         fig.update_yaxes(title_text="Content Count",row=2,col=2)
         cumulative = df.groupby('year_added').size().reset_index(name='count')
         cumulative['cumulative_count'] = cumulative['count'].cumsum()
-        fig.add_trace(go.Scatter(x=cumulative['year_added'],y=cumulative['cumulative_count'],mode='lines+markers',name='Cumulative Growth'),row=3,col=1)
+        fig.add_trace(go.Scatter(x=cumulative['year_added'],y=cumulative['cumulative_count'],mode='lines+markers',name='Cumulative Growth'),row=3,col=2)
         fig.update_yaxes(title_text="Total Content",row=3,col=2)
         rating_trend = df.groupby(['year_added','rating']).size().reset_index(name='count')
         top_ratings = ['TV-MA','TV-14','PG','R']
