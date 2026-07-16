@@ -242,17 +242,11 @@ elif side=='Visualization':
         fig.add_trace(go.Scatter(x=tv_shows['year_added'],y=tv_shows['count'],name='TV Shows',mode='lines+markers'),row=1,col=2)
         fig.update_yaxes(title_text="TV Shows Added", row=1, col=2)
 
-        
-        # fig.add_trace(go.Histogram(x=df['release_year'],name='Release Year',marker_color='orange'),row=2,col=1)
-        # fig.update_xaxes(title_text="Release Year", row=2, col=1)
-        # fig.update_layout(height=400)
         country_df = df.copy()
         country_df['country'] = country_df['country'].fillna('Unknown')
         country_df['country'] = country_df['country'].str.split(',').str[0]
         top_country = country_df['country'].value_counts().head(5).index
-        # fig.add_trace(go.Bar(x=top_country.values,y=top_country.index,orientation='h',name='Countries'),row=2,col=1)
-        # fig.update_xaxes(title_text="Content Count",row=2,col=1)
-        # fig.update_yaxes(title_text="Country",row=2,col=1)
+
         country_year=country_df.groupby(['year_added','country']).size().reset_index(name='count')
         country_year=country_year[country_year['country'].isin(top_country)]
         for c in top_countries:
@@ -261,9 +255,6 @@ elif side=='Visualization':
         fig.update_layout(barmode='stack')
         fig.update_xaxes(title_text="Year Added",row=2,col=1)
         fig.update_yaxes(title_text="Content Count",row=2,col=1)
-        
-                
-
         
         genre_df = df.copy()
         genre_df['genre']=genre_df['genre'].str.split(',').str[0]
@@ -314,9 +305,7 @@ elif side=='Insights':
                 st.metric("Common Rating", "TV-MA")
                 st.caption("The most common content rating")
         with st.container(border=True):
-            st.metric("Global Expansion", "India,UK,Japan,South Korea ")
+            st.metric("Global Expansion", "India,UK,Japan,Canada ")
             st.caption("Thes countries are among Netflix's major content contributors after United States")
         
-            # with st.container(border=True):
-            #     st.metric("TV Show Longetivity", "1 Season")
-            #     st.caption("The most common Season Duration")
+            
