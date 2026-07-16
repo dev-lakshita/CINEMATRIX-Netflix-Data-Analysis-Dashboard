@@ -236,7 +236,7 @@ elif side=='Visualization':
         tv_shows=df_trends[df_trends['type']=='TV Show']
         df_cleaned=df[~df['rating'].str.contains('min',case=False)].reset_index(names='count')
         ratings_counts=df_cleaned['rating'].value_counts().reset_index(name='count')
-        fig=make_subplots(rows=3,cols=2,subplot_titles=("Total Content Added Over Years(Movies)","Total Content Added Over Years(TV Shows)", "Distribution of Content Release Year","Content by Age Rating","Cumulative Growth of Content","Content Ratings Trend Over Years"))
+        fig=make_subplots(rows=3,cols=2,subplot_titles=("Total Content Added Over Years(Movies)","Total Content Added Over Years(TV Shows)", "Distribution of Content Release Year","Growth of Content by Genre","Cumulative Growth of Content","Content Ratings Trend Over Years"))
         fig.add_trace(go.Scatter(x=movies['year_added'],y=movies['count'],name='Movies',mode='lines+markers'),row=1,col=1)
         # fig.update_xaxes(title_text="Year Added", row=1, col=1)
         fig.update_yaxes(title_text="Movies Added", row=1, col=1)
@@ -246,11 +246,6 @@ elif side=='Visualization':
         fig.add_trace(go.Histogram(x=df['release_year'],name='Release Year',marker_color='orange'),row=2,col=1)
         fig.update_xaxes(title_text="Release Year", row=2, col=1)
         fig.update_layout(height=400)
-        # fig.update_yaxes(title_text="Count", row=2, col=1)
-        # fig.add_trace(go.Bar(x=ratings_counts['rating'],y=ratings_counts['count'],name='Ratings Count',marker_color='green'),row=2,col=2)
-        # fig.update_xaxes(title_text="Age Rating", row=2, col=2)
-        # fig.update_layout(height=400)
-
         genre_df = df.copy()
         genre_df['genre']=genre_df['genre'].str.split(',').str[0]
         top_genres = genre_df['genre'].value_counts().head(3).index
